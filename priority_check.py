@@ -16,7 +16,7 @@ from nltk.stem import WordNetLemmatizer
 from string import punctuation
 from nltk.corpus import stopwords
 from tkinter import ttk
-
+from tkinter import messagebox
 
 
 with open('pmbotlogreg.pkl', 'rb') as file:
@@ -82,6 +82,7 @@ def browse_file():
         read_csv_file(file_path)
 
 def read_csv_file(file_path):
+  try:
     df=pd.read_csv(file_path,index_col=False)
     x=df['project_stream'].tolist()
     #print(x)
@@ -119,6 +120,8 @@ def read_csv_file(file_path):
         treeview.tag_configure('High', background='red')
         treeview.tag_configure('Low', background='green',foreground='white')
         treeview.tag_configure('Medium', background='yellow')
+  except:
+    messagebox.showerror('PDF error', 'Please enter valid pDF')
 
 
 

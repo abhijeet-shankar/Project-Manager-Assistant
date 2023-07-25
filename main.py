@@ -222,6 +222,7 @@ def check_status():
     fail_status=[]
     undefined_status=[]
     others=[]
+    count_all,count_pass,count_fail,count_pf,count_not,count_others=0,0,0,0,0,0
     def select_pdf():
         file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if file_path:
@@ -240,7 +241,10 @@ def check_status():
             #print(df)
             for i,j in zip(df.iloc[:,1],df.iloc[:,2]):
                 try:
+                    x=j.replace(" ","")
                     if  'nan' not in i and 'pass/fail' in j.lower():
+                        passfail_status.append([i,j])
+                    elif r'pass/fail' in x.lower() :
                         passfail_status.append([i,j])
                     elif 'nan' not in i and 'not tested' in j.lower() or 'not shown' in j.lower() or 'not applicable' in j.lower() or 'notapplicable' in j.lower() or 'notshown' in j.lower() or  'nottested' in j.lower() or "not ok" in j.lower() or "notok" in j.lower():
                         undefined_status.append([i,j])
@@ -260,100 +264,124 @@ def check_status():
             on_option_selected()      
 
     def on_option_selected(*args):
+        count_all=len(passfail_status)+len(pass_status)+len(fail_status)+len(undefined_status)+len(others)
+        count_fail=len(fail_status)
+        count_pass=len(pass_status)
+        count_not=len(undefined_status)
+        count_pf=len(passfail_status)
+        count_others=len(others)
+
         selected_option = option_var.get()
+
         if selected_option == "All":
             treeview.delete(*treeview.get_children())
             for i,j in passfail_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('PF',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('PF',))
 
             for i,j in pass_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('Pass',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('Pass',))
 
             for i,j in fail_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('Fail',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('Fail',))
 
             for i,j in undefined_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('Not',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('Not',))
 
             for i,j in others:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('others',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('others',))
+            lc.config(text=f'[{count_all}]')
 
         elif selected_option == "Pass/Fail":
             treeview.delete(*treeview.get_children())
             for i,j in passfail_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('PF',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('PF',))
+            lc.config(text=f'[{count_pf}]')
 
         elif selected_option == "Pass":
             treeview.delete(*treeview.get_children())
             for i,j in pass_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('Pass',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('Pass',))
+            lc.config(text=f'[{count_pass}]')
 
 
         elif selected_option == "Fail":
             treeview.delete(*treeview.get_children())
             for i,j in fail_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('Fail',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('Fail',))
+            lc.config(text=f'[{count_fail}]')
 
 
         elif selected_option == "Others":
             treeview.delete(*treeview.get_children())
             for i,j in others:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('others',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('others',))
+            lc.config(text=f'[{count_others}]')
 
         elif selected_option == "Not--":
             treeview.delete(*treeview.get_children())
             for i,j in undefined_status:
+                s=str(j).replace('\r',' ')
                 i=str(i).replace('\r', '')
                 j=j.split('–')[-1]
                 j=j.split('-')[-1]
                 j=str(j).replace('\r','')
                 #print(i +" " +j)
-                treeview.insert('', tk.END, values=(i,j), tags = ('Not',))
+                treeview.insert('', tk.END, values=(i,j,s), tags = ('Not',))
+            lc.config(text=f'[{count_not}]')
 
             #print(extracted_data[i])
         treeview.tag_configure('PF', background='orange')
@@ -397,12 +425,11 @@ def check_status():
 
     main_app.withdraw()
     app=tk.Tk()
-    app.geometry('480x640')
+    app.geometry('640x690')
     app.title('PMassistant')
     app.config(background='beige')
     app.attributes('-topmost', True)
     app.resizable(0, 0)
-
 
     style = ttk.Style(app) 
     style.theme_use("clam")
@@ -423,11 +450,12 @@ def check_status():
     l=ttk.Label(app,anchor='center',text='STATUS CHECK',style='Custom.TLabel')
     l.pack(pady=10)
 
-    treeview = ttk.Treeview(app, columns=('Column 1', 'Column 2'),height=20, show='headings')
+    treeview = ttk.Treeview(app, columns=('Column 1', 'Column 2','Column 3'),height=20, show='headings')
     treeview.heading('Column 1', text='Ref No.')
     treeview.heading('Column 2', text='Status')
+    treeview.heading('Column 3', text='Details')
     treeview.bind('<<TreeviewSelect>>', selection)  
-    treeview.pack()
+    treeview.pack(pady=10)
 
     style.configure('treeview.heading', background="PowderBlue")
 
@@ -439,6 +467,9 @@ def check_status():
     options = ["Select an option","All","Pass/Fail" , "Pass", "Fail","Not--","Others"]
     option_var.set(options[0])
     option_menu = ttk.OptionMenu(app, option_var, *options, command=on_option_selected)
+    style.configure("Customlc.TLabel", font=("Arial", 14,'bold'), foreground="midnight blue", background="beige")
+    lc=ttk.Label(app,text='[COUNT HERE]',style='Customlc.TLabel')
+    lc.pack(pady=5)
 
 
     b=ttk.Button(button_frame,text='Input PDF',command=select_pdf, style="Custom.TButton")
